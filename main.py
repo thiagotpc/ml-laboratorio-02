@@ -25,6 +25,7 @@ def carrega_conjunto_treinamento():
 def get_conjunto_treinamento(tudo, tamanho):
     return [tudo[0][:tamanho], tudo[1][:tamanho]]
 
+
 # generaliza a execução do treino e teste e retorna vetor de resultado
 def treinar_e_testar(classificador_nome, classificador, dados_treinamento, tamanho):
     # Treinamento
@@ -41,6 +42,7 @@ def treinar_e_testar(classificador_nome, classificador, dados_treinamento, taman
     acuracia = classificador.score(dados_testes[0], dados_testes[1])
     matriz_de_confusao = confusion_matrix(dados_testes[1], predict)
     filename_matriz = classificador_nome + '_' + str(tamanho) + '.csv'
+    # usa a biblioteca pandas para gravar um arquivo csv
     pd.DataFrame(matriz_de_confusao).to_csv('out/'+filename_matriz, decimal=',', index=False, sep=';', float_format='%.4f')
     return [tempo_testes, tempo_treinamento, f1score, acuracia, matriz_de_confusao]
 
@@ -92,7 +94,7 @@ def executa_testes():
     limpa_diretorio()
     resultados = []
     dados_treinamento = carrega_conjunto_treinamento()
-    lista_classificadores = ['naive_bayes', 'lda', 'logistic_regression', 'perceptron', 'knn']
+    lista_classificadores = ['knn', 'naive_bayes', 'lda', 'logistic_regression', 'perceptron']
     for classificador in lista_classificadores:
         for qtde_amostras in range(1000, 20001, 1000):
             if classificador == 'knn':
@@ -107,7 +109,7 @@ def executa_testes():
                 resultados.append(perceptron(dados_treinamento, qtde_amostras))
             else:
                 print(f'Classificador {classificador} não implementado ainda!')
-
+    # usa a biblioteca pandas para gravar os resultados em csv
     header_csv = ['Classificador', 'Amostras', 'Tempo de Treinamento', 'Tempo de Testes', 'Acuracia', 'F1Score']
     pd.DataFrame(resultados).to_csv('out/resultados.csv', header=header_csv, decimal=',', index=False, sep=';', float_format='%.4f')
 
